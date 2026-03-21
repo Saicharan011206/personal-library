@@ -1,30 +1,80 @@
 # System Architecture
 
-The Private Knowledge Library indexes documents stored in a Nextcloud instance and provides full text-search capabilities.
+This project implements a private document search engine integrated with a self-hosted Nextcloud instance.
 
-## Components
+Documents stored in selected Nextcloud folders are scanned, processed, indexed into Meilisearch, and exposed through a FastAPI search API.
 
-### Nextcloud
+## High-Level Flow
+```
+Nextcloud Storage
+      ↓
+Document Scanner
+      ↓
+Text Extraction
+      ↓
+Meilisearch Index
+      ↓
+FastAPI Search API
+      ↓
+Client Search Requests
+```
 
-Stores user documents including PDFs, ebooks, and text files.
+## Core Components
 
-### Indexer
+### Nextcloud Storage
 
-Python-based service that scans configured Nextcloud folders, extracts document text, and sends data to the search index.
+Documents are stored in the Nextcloud data directory:
 
-### Meilisearch
+`/storage/nextcloud-data/admin/files`
 
-Full-text search engine responsible for indexing and retrieving documents.
+The search engine scans only selected folders such as:
 
-### FastAPI
+- Books
+- Docs
+- Notes
 
-Provides a REST API interface for performing document searches.
+### Scanner
 
-## Workflow
+The scanner walks through configured folders and detects supported files.
 
-- User uploads file -> Nextcloud storage
-- Indexer scans configured folders
-- Text extracted from documents
-- Documents indexed into Meilisearch
-- Search API returns results with links to open files in Nextcloud
+Supported formats:
 
+- PDF
+- TXT
+- Markdown
+
+### Text Extraction
+
+PDF content is extracted using `pdfminer.six`.
+
+Plain text and Markdown files are read directly from disk.
+
+### Search Engine
+
+Meilisearch stores indexed documents and provides fast full-text search.
+
+Each indexed document stores:
+
+- safe document ID
+- file title
+- extracted content
+- original file path
+- generated Nextcloud URL
+
+### API Layer
+
+FastAPI exposes the search functionality through HTTP endpoints.
+
+Example endpoint:
+
+`GET /search?q=debian`
+
+### Nextcloud Integration
+
+Search results include a generated Nextcloud URL so files can be opened directly from the Nextcloud web interface.
+
+## Deployment Model
+
+The project runs on a Debian server alongside Nextcloud.
+
+Meilisearch and FastAPI are deployed as systemd services.

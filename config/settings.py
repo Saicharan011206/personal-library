@@ -1,21 +1,24 @@
-NEXTCLOUD_ROOT = '/storage/nextcloud-data/charan/files'
+# Personal Library Configuration
+# Defines storage paths, supported file types, and search engine settings.
 
-INDEX_FOLDERS= [
-    "books",
-    "documents",
-    "notes"
+NEXTCLOUD_ROOT = "/storage/nextcloud-data/admin/files"
+
+INDEX_FOLDERS = [
+    "Books",
+    "Docs",
+    "Notes",
 ]
 
 SUPPORTED_EXTENSIONS = [
     ".pdf",
     ".txt",
     ".md",
-    ".epub"
+    ".epub",
 ]
 
-NEXTCLOUD_BASE_URL = "https://<you-nextcloud-url>"
+NEXTCLOUD_BASE_URL = "https://100.88.187.43"
 
-MULTISEARCH_HOST= "http://127.0.0.1:7700"
-
-MULTISEARCH_INDEX= "documents"
+MEILISEARCH_HOST = "http://127.0.0.1:7700"
+MEILISEARCH_MASTER_KEY = "CHANGE_ME"
+MEILISEARCH_INDEX = "documents"
 
